@@ -1,1 +1,2 @@
 cicd/password.txt
+airflow/dags/.env
