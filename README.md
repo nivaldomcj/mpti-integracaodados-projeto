@@ -20,17 +20,19 @@ A fazer...
 - Fazer o clone deste repositório na sua máquina
 - [Configurar o Argo](cicd/setup.sh)
 - [Configurar o MinIO](datalake/setup.sh)
-- ...
+- [Configurar o Airflow](orchestration/setup.sh)
 
 ## Descrição da pipeline
 
-Essa é uma descrição simplificada da ordem da pipeline:
+Essa é uma descrição simplificada da pipeline:
 
 ```
 ⚙️ CI/CD
     📦 Argo
 ⚙️ Data Lake
     📦 Minio
+⚙️ Orchestration
+    📦 Airflow
 ```
 
 ## Autores

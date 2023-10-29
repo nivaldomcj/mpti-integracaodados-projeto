@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # app name
+  name: airflow
+  # deployed yaml
+  namespace: cicd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/airflow-helm/charts'
+    path: charts/airflow
+    targetRevision: HEAD
+    helm:
+      parameters:
+        - name: 'dags.gitSync.enabled'
+          value: 'true'
+        - name: 'dags.gitSync.sshSecret'
+          value: 'git-ssh-key-secret'
+        - name: 'dags.gitSync.repo'
+          value: 'git@github.com:nivaldomcj/mpti-integracaodados-projeto.git'
+        - name: 'dags.gitSync.branch'
+          value: 'main'
+        - name: 'dags.gitSync.subPath'
+          value: 'orchestration/dags'
+        - name: 'dags.gitSync.wait'
+          value: 'true'
+      values: |
+        airflow:
+          extraPipPackages:
+            - minio
+            - pandas
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: orchestrator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  
