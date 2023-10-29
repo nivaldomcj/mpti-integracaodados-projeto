@@ -18,6 +18,6 @@ A fazer...
 
 ## Autores
 
-Laerty Santos da Silva
-Jose Mario Fraga Miranda
-Nivaldo Mariano de Carvalho Junior
+- Laerty Santos da Silva
+- Jose Mario Fraga Miranda
+- Nivaldo Mariano de Carvalho Junior
