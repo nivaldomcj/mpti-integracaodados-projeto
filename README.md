@@ -7,7 +7,7 @@ A fazer...
 ## Requisitos do projeto
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- Linux, MacOS ou Windows com WSL
+- [Linux](https://distrochooser.de/), MacOS ou [Windows com WSL](https://learn.microsoft.com/pt-br/windows/wsl/install)
 - [Docker](https://docs.docker.com/get-docker/)
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [Helm](https://helm.sh/docs/intro/install/)
