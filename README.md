@@ -2,7 +2,7 @@
 
 ## Sobre o projeto
 
-A fazer...
+(A fazer: Descrever o projeto)
 
 ## Requisitos do projeto
 
@@ -21,6 +21,8 @@ A fazer...
 - [Configurar o Argo](cicd/setup.sh)
 - [Configurar o MinIO](datalake/setup.sh)
 - [Configurar o Airflow](orchestration/setup.sh)
+- (A fazer: Colocar as instruções de outras partes da config. do projeto)
+- 
 
 ## Descrição da pipeline
 
