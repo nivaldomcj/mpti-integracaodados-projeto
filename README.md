@@ -16,15 +16,20 @@ A fazer...
 
 ## Configurando o projeto
 
-A fazer...
+- Instalar o git e as ferramentas necessárias
+- Fazer o clone deste repositório na sua máquina
+- [Configurar o Argo](cicd/setup.sh)
+- ...
 
 ## Descrição da pipeline
 
-(Em andamento...)
+Essa é uma descrição simplificada da ordem da pipeline:
+
 ```
 ⚙️ CI/CD
     📦 Argo
-⚙️ 
+⚙️ Data Lake
+    📦 Minio
 ```
 
 ## Autores
