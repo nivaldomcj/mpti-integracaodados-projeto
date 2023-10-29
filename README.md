@@ -19,6 +19,7 @@ A fazer...
 - Instalar o git e as ferramentas necessárias
 - Fazer o clone deste repositório na sua máquina
 - [Configurar o Argo](cicd/setup.sh)
+- [Configurar o MinIO](datalake/setup.sh)
 - ...
 
 ## Descrição da pipeline
