@@ -49,7 +49,7 @@ def getPlataformaDownload():
     if platform.system() == "Linux":
         return '/var/aplicacaoes/indimap/indimap_py/downloads/'
     elif platform.system() == "Windows":
-        return os.path.abspath('.')+'\downloads\\'
+        return os.path.abspath('../../airflow/dags')+ '\downloads\\'
     else:
         return '/downloads/'
 

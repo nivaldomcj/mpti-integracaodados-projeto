@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
-import requests
 import csv
-import logging
 import geopandas as gpd
-import pandas as pd
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 import conexao
 import requests
 import tabelas
-import uteis
 from shapely.geometry import Point
-import json
 from datetime import datetime, timedelta
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import sessionmaker
@@ -20,9 +15,8 @@ import uteis
 from geoalchemy2.shape import from_shape
 from shapely.wkt import loads
 import time
-import platform
 from sqlalchemy.sql import text
-from sqlalchemy.exc import DatabaseError
+
 start_time = time.time()
 engine = conexao.geConnectionSqlAlchemyGetEngine()
 
