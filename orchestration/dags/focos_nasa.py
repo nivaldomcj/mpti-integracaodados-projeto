@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 import csv
 import geopandas as gpd
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-
 import conexao
 import requests
 import tabelas
 from shapely.geometry import Point
-from datetime import datetime, timedelta
 from sqlalchemy.dialects.sqlite import insert
 from sqlalchemy.orm import sessionmaker
 import uteis
@@ -58,7 +54,7 @@ def csv_to_json(csv_data, item):
             sat = item["instrumento"] + " - " + item["satelite"]
         else:
             sat = item["instrumento"] + " - " + row["satellite"]
-
+            
         obj = {"id_inpe": row['latitude'] + '-' + row['longitude'] + '-' + row["acq_date"] + '-' + row["acq_time"],
                "satelite": sat,
                "frp": row["frp"],
@@ -105,50 +101,22 @@ def filtra_apenas_focos_ti(lista_pontos, df_postgis_terras_indigenas):
     df_focos_terras.crs = 'EPSG:4674'
     return df_focos_terras
 
-def process_data():
-    start_time = time.time()
-    df_postgis_terras_indigenas = get_dados_inicias()
-    lista_de_urls = create_url_list()
+for item in lista_de_urls:
+    response = requests.get(item["url"])
+    data_list = []
+    csv_data = response.text
+    lista_pontos = csv_to_json(csv_data, item)
 
-    for item in lista_de_urls:
-        response = requests.get(item["url"])
-        data_list = []
-        csv_data = response.text
-        lista_pontos = csv_to_json(csv_data,item)
+    if len(lista_pontos) > 0:
+        df_focos_terras=filtra_apenas_focos_ti(lista_pontos, df_postgis_terras_indigenas)
+        salva_focos_ti(df_focos_terras)
+    else:
+        print("NENHUM REGISTRO NOVO")
 
-        if len(lista_pontos) > 0:
-            df_focos_terras = filtra_apenas_focos_ti(lista_pontos, df_postgis_terras_indigenas)
-            salva_focos_ti(df_focos_terras)
-        else:
-            print("NENHUM REGISTRO NOVO")
+time.sleep(20)
+execute_function_postgres()
 
-    time.sleep(20)
-    execute_function_postgres()
-
-    end_time = time.time()
-    total_time = end_time - start_time
-    print('Tempo de execução em segundo: {} '.format(str(total_time)))
-    print('PROCESSAMENTO FINALIZADO!')
-
-
-dag = DAG(
-    'focos_nasa_dag',
-    default_args={
-        'owner': 'Mário Fraga',
-        'start_date': datetime(2023, 10, 29),
-        'retries': 1,
-        'retry_delay': timedelta(minutes=10),
-    },
-    schedule_interval='0 * * * *',  # executa a ada uma hora
-    catchup=False,
-    max_active_runs=1,
-)
-
-process_data_task = PythonOperator(
-    task_id='process_data_task',
-    python_callable=process_data,
-    dag=dag,
-)
-
-if __name__ == "__main__":
-    dag.cli()
+end_time = time.time()
+total_time = end_time - start_time
+print('Tempo de execução em segundo: {} '.format(str(total_time)))
+print('PROCESSAMENTO FINALIZADO!')
