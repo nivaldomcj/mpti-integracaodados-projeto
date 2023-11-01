@@ -30,6 +30,14 @@ spec:
           extraPipPackages:
             - minio
             - pandas
+            - gTTS
+            - Unidecode
+            - python-dotenv
+            - GeoAlchemy2
+            - SQLAlchemy
+            - geopandas
+            - shapely
+            - psycopg2
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: orchestrator
