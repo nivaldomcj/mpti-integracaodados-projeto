@@ -14,7 +14,8 @@ kubectl create ns orchestrator
 # -> id_rsa: geralmente é o arquivo `.ssh/id.rsa` ou `.ssh/id_ed25519`
 # -> known_hosts: é o arquivo .ssh/known_hosts
 # -> id_rsa.pub: geralmente é o arquivo `.ssh/id_ed25519.pub` ou `.ssh/id_rsa.pub`
-kubectl create secret generic git-ssh-key-secret --from-file=id_rsa=<arquivo_rsa> --from-file=known_hosts=<arquivo_known> --from-file=id_rsa.pub=<arquivo_pub> -n orchestrator
+#kubectl create secret generic git-ssh-key-secret --from-file=id_rsa=<arquivo_rsa> --from-file=known_hosts=<arquivo_known> --from-file=id_rsa.pub=<arquivo_pub> -n orchestrator
+kubectl create secret generic git-ssh-key-secret --from-file=id_rsa=~/.ssh/id_ed25519 --from-file=known_hosts=.ssh/known_hosts --from-file=id_rsa.pub=~/.ssh/id_ed25519.pub -n orchestrator
 
 # aplicar a configuração do Argo para subir o Airflow
 kubectl apply -f ./orchestration/airflow.yaml

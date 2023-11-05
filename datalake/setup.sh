@@ -1,3 +1,7 @@
+#adiciona e startar o serviço do minio
+sudo systemctl enable minio.service
+sudo systemctl start minio.service
+
 # criar o namespace "datalake" no cluster kubernetes do minikube
 kubectl create namespace datalake
 

@@ -1,3 +1,6 @@
+sudo systemctl enable docker.service
+sudo systemctl start docker.service
+
 # cria o namespace no cluster kubernetes do minikube
 kubectl create namespace cicd
 

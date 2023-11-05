@@ -37,6 +37,12 @@ Essa é uma descrição simplificada da pipeline:
     📦 Airflow
 ```
 
+## URL de cada serviço
+- [Argo](https://localhost:8080/)
+- [MinIO](http://127.0.0.1:9000)
+- [Airflow](http://127.0.0.1:8001)
+
+
 ## Autores
 
 - Laerty Santos da Silva
