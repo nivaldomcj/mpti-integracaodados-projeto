@@ -1,24 +1,41 @@
-from trino.dbapi import connect
+from trino.dbapi import connect, Cursor
 from trino.auth import BasicAuthentication
+
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
+from sqlalchemy.engine import URL
+from sqlalchemy.engine import Connection, Engine
 
 TRINO_HOST = 'trino.ifpbapps.online'
 TRINO_PORT = 443
 TRINO_USER = 'trino'
 TRINO_PASS = 'REDACTED_TRINO_PASS'
 
+YUGABYTE_HOST = 'yugabyte.ifpbapps.online'
+YUGABYTE_PORT = 5433
+YUGABYTE_DB = 'yugabyte'
+YUGABYTE_USER = 'yugabyte'
+YUGABYTE_PASS = 'REDACTED_YUGABYTE_PASS'
+
 # Mude aqui qual é o bucket do minio onde estão os arquivos
 BUCKET_NAME = 'indimap'
 SCHEMA_NAME = 'data'
 
 
-def send_table_to_yugabyte(trino_cursor, table_name):
-    trino_cursor.execute(
-        f'SELECT * FROM "{BUCKET_NAME}"."{SCHEMA_NAME}"."{table_name}"')
-    rows = trino_cursor.fetchall()
-    print(rows)
+def send_table_to_yugabyte(trino_cursor: Cursor, 
+                           yugabyte_connection: Connection, 
+                           table_name: str):
+    # TODO: ler os registros do trino
+    # trino_cursor.execute(
+    #     f'SELECT * FROM "{BUCKET_NAME}"."{SCHEMA_NAME}"."{table_name}"')
+    # rows = trino_cursor.fetchall()
+    
+    # TODO: conectar ao yugabyte e jogar esses registros no yugabyte
+    # result = yugabyte_connection.execute(text('SELECT * FROM ?'))
+    pass
 
 
-def create_focos_table(cursor, table_name):
+def create_focos_table(cursor: Cursor, table_name: str):
     # Lembre-se: CSV não tem tipos de dados, por isso aqui tudo é varchar
     cursor.execute(
         f'create table "{BUCKET_NAME}"."{SCHEMA_NAME}".{table_name} ('
@@ -45,6 +62,22 @@ def create_focos_table(cursor, table_name):
     )
 
 
+def connect_to_yugabyte():
+    yugabyte_url = URL.create(
+        drivername='postgresql',
+        host=YUGABYTE_HOST,
+        port=YUGABYTE_PORT,
+        username=YUGABYTE_USER,
+        password=YUGABYTE_PASS,
+        database=YUGABYTE_DB,
+    )
+    yugabyte_engine = create_engine(yugabyte_url)
+    yugabyte_connection = yugabyte_engine.connect()
+    if yugabyte_engine and yugabyte_connection:
+        print(f'Conectado com sucesso ao YugabyteDB via ({YUGABYTE_HOST})')
+    return yugabyte_engine, yugabyte_connection
+
+
 def connect_to_trino():
     trino_connection = connect(
         host=TRINO_HOST,
@@ -53,13 +86,14 @@ def connect_to_trino():
         http_scheme='https',
     )
     trino_cursor = trino_connection.cursor()
+    if trino_connection and trino_cursor:
+        print(f'Conectado com sucesso ao Trino via ({TRINO_HOST})')
     return trino_connection, trino_cursor
 
 
 def main():
     trino_connection, trino_cursor = connect_to_trino()
-    if trino_connection and trino_cursor:
-        print(f'Conectado com sucesso ao {TRINO_HOST}')
+    yugabyte_engine, yugabyte_connection = connect_to_yugabyte()
 
     """
     Defina aqui os scripts para criação da namespace para o Trino acessar o Minio
@@ -81,10 +115,10 @@ def main():
     # trino_cursor.execute('drop table indimap.data.focos_s_npp')
 
     for table_name in ['focos_s_npp', 'focos_noaa_20', 'focos_modis']:
-        send_table_to_yugabyte(trino_cursor, table_name)
+        send_table_to_yugabyte(trino_cursor, yugabyte_connection, table_name)
         break
 
-    # TODO: fazer a conexão com o yugabytedb...
+    print("Finished! :D")
 
 if __name__ == '__main__':
     main()

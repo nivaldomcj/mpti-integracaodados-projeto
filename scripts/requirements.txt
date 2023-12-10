@@ -1,3 +1,13 @@
+# webclient
 requests
+
+# minio
 minio
+
+# trino
 trino
+
+# yugabytedb
+psycopg2-binary
+sqlalchemy
+jsonpickle
