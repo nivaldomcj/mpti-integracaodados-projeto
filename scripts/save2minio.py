@@ -30,7 +30,7 @@ if not minio_client.bucket_exists(BUCKET_NAME):
 
 for filename in files_to_upload:
     minio_client.remove_object(BUCKET_NAME, filename)
-    print(f'Tentando remover o arquivo {BUCKET_NAME}/${filename}')
+    print(f'Tentando remover o arquivo {BUCKET_NAME}/{filename}')
 
     # ver: https://min.io/docs/minio/linux/developers/python/API.html
     file_content = urlopen(url=files_to_upload[filename])
