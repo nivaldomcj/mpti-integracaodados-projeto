@@ -26,10 +26,17 @@ def send_table_to_yugabyte(trino_cursor: Cursor,
                            yugabyte_connection: Connection, 
                            table_name: str):
     # TODO: ler os registros do trino
-    # trino_cursor.execute(
-    #     f'SELECT * FROM "{BUCKET_NAME}"."{SCHEMA_NAME}"."{table_name}"')
-    # rows = trino_cursor.fetchall()
-    
+    trino_cursor.execute(
+        f'SELECT * FROM "{BUCKET_NAME}"."{SCHEMA_NAME}"."{table_name}"')
+    rows = trino_cursor.fetchall()
+
+
+    # for row in rows:
+    #     row_dict = dict(zip([desc[0] for desc in trino_cursor.description], row))
+    #     country_id = row_dict['country_id']
+    #     print(country_id)
+
+    print([desc[0] for desc in trino_cursor.description])
     # TODO: conectar ao yugabyte e jogar esses registros no yugabyte
     # result = yugabyte_connection.execute(text('SELECT * FROM ?'))
     pass
@@ -116,7 +123,7 @@ def main():
 
     for table_name in ['focos_s_npp', 'focos_noaa_20', 'focos_modis']:
         send_table_to_yugabyte(trino_cursor, yugabyte_connection, table_name)
-        break
+
 
     print("Finished! :D")
 
