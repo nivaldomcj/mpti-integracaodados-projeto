@@ -2,7 +2,9 @@
 
 ## Sobre o projeto
 
-(A fazer: Descrever o projeto)
+Este projeto coleta focos de calor detectados por satélite no Brasil e guarda apenas os focos que caem dentro de terras indígenas.
+
+Os dados vêm da API FIRMS da NASA. A pipeline lê os instrumentos MODIS e VIIRS (satélites NOAA-20 e S-NPP), sempre com os últimos 3 dias. Cada foco passa por uma junção espacial (GeoPandas, EPSG:4674) com a tabela `terras_indigenas`. Os focos que sobram são gravados na tabela `public.focos`. No fim de cada carga, a pipeline executa a função SQL `indimap_atualiza_cidades_focos()`.
 
 ## Requisitos do projeto
 
@@ -18,11 +20,14 @@
 
 - Instalar o git e as ferramentas necessárias
 - Fazer o clone deste repositório na sua máquina
+- [Iniciar o Minikube](start_minikube.sh) (4 CPUs e 8 GB de memória)
 - [Configurar o Argo](cicd/setup.sh)
 - [Configurar o MinIO](datalake/setup.sh)
 - [Configurar o Airflow](orchestration/setup.sh)
-- (A fazer: Colocar as instruções de outras partes da config. do projeto)
-- 
+
+Cada `setup.sh` traz comentários com os ajustes necessários. Um exemplo é o repositório das DAGs em `orchestration/airflow.yaml`. O `run.sh` de cada pasta refaz o `port-forward` e lista o usuário padrão do serviço.
+
+Para rodar os scripts da pasta `scripts/`, instale as dependências com `pip install -r scripts/requirements.txt`. O `minio2yugabyte.py` exige a versão 1.4.49 do SQLAlchemy.
 
 ## Descrição da pipeline
 
@@ -37,11 +42,25 @@ Essa é uma descrição simplificada da pipeline:
     📦 Airflow
 ```
 
-## URL de cada serviço
-- [Argo](https://localhost:8080/)
-- [MinIO](http://127.0.0.1:9000)
-- [Airflow](http://127.0.0.1:8001)
+Existem dois caminhos para a mesma carga de dados.
 
+1. **DAG do Airflow** (`orchestration/dags/focos_nasa_dag.py`). Roda a cada hora, baixa os três CSVs da NASA, filtra os focos em terras indígenas e grava em `public.focos`. Em caso de falha, tenta de novo uma vez após 10 minutos. Só uma execução fica ativa por vez.
+2. **Scripts** (`scripts/`). O `nasa2minio.py` baixa os CSVs para o bucket `indimap` do MinIO. O `minio2yugabyte.py` lê esses arquivos pelo Trino (tabelas `focos_modis`, `focos_noaa_20` e `focos_s_npp`), filtra os focos e grava no YugabyteDB.
+
+## URL de cada serviço
+
+- [Argo](https://localhost:8080/)
+- MinIO: [console](http://localhost:9001) e API em `http://localhost:9000`
+- [Airflow](http://localhost:8001)
+
+O Trino e o YugabyteDB são serviços externos. Eles não sobem no Minikube.
+
+## Estado atual
+
+O projeto está incompleto.
+
+- O `minio2yugabyte.py` é o último passo escrito e ainda não virou uma DAG.
+- As credenciais do Trino, do YugabyteDB e do MinIO, e a chave da API da NASA, estão escritas no código. Elas devem ir para variáveis de ambiente.
 
 ## Autores
 
